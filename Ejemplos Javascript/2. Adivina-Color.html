@@ -1,0 +1,119 @@
+<!doctype html>
+<html>  
+    <head>
+        <title>Color Guessing Game</title>
+        <meta name="author" content="d4160">
+        <meta charset="utf-8">
+    </head>
+
+    <body onload="startGame()">
+        <script>
+            /* HTML Elements */
+            var bodyElement; //HTMLBodyElement
+
+            /* Other variables */
+            var targetColorName;
+            var finished;
+            var guessInputText;
+            var guesses = 0;
+            var sortedColors;
+
+            function startGame()
+            {
+                /* CATCH OF ELEMENTS */
+                bodyElement = document.getElementsByTagName("body")[0];
+
+                /* Game Parameters */
+                var colors = ["Azure","Coral","Beige","Crimson","Gold","Fuchsia","Indigo","Khaki"];
+                // Sort the colors
+                sortedColors = colors.sort();
+
+                // String of the sortedColors
+                var colorsString = sortedColors.join(", ");
+
+                // Transforms all to uppercase
+                sortedColors.forEach(
+                    function(element, index, array){
+                        array[index] = element.toUpperCase();
+                    }
+                );
+
+                // Random valid index
+                var randomIndex = getIntRandom(0, sortedColors.length);
+                // Set the targetColorName
+                targetColorName = sortedColors[randomIndex];
+
+                //alert("Color: " + targetColorName);
+                
+                while(!finished)
+                {
+                    guessInputText = prompt("Estoy pensando en uno de estos colores: \n\n"+
+                                  colorsString +
+                                  "\n\n Cual color crees que estoy pensando?");
+                    if (!guessInputText)
+                        continue;
+
+                    guessInputText = guessInputText.toUpperCase();
+
+                    guesses++;
+
+                    finished = checkGuess();
+                }
+            }
+
+            function checkGuess()
+            {
+                if (sortedColors.indexOf(guessInputText) == -1)
+                {
+                    alert("Ups, no reconozco ese color \n\n" +
+                        "\Trata de nuevo.");
+
+                    return false;
+                }
+                
+                if (!compare(guessInputText, targetColorName))
+                {
+                    if (guessInputText < targetColorName)
+                        alert("Lo siento, no es el color correcto! \n\n" +
+                            "Ayuda: el color que ingresaste es alfabeticamente menor que el mio.\n\n" +
+                            "\Por favor intentalo otra vez.");
+                    else if (guessInputText > targetColorName)
+                        alert("Lo siento, no es el color correcto! \n\n" +
+                            "Ayuda: el color que ingresaste es alfabeticamente mayor que el mio\n\n" +
+                            "\Por favor intentalo otra vez.");    
+
+                    return false;
+                }
+                
+                paintBody();
+
+                alert("Felicitaciones! Adivinaste el color! \n\n" + 
+                        "Te temo " + guesses + " intentos para finalizar el juego! \n\n" + 
+                        "Podras ver el color como fondo.");
+
+                return true;
+
+            }
+
+            function paintBody()
+            {
+                bodyElement.style.background = targetColorName;
+            }
+
+            function getIntRandom(min, max)
+            {
+                return Math.floor(getRandom(min, max));
+            }
+
+            function getRandom(min, max)
+            {
+                return Math.random() * (max - min) + min;
+            }
+
+            function compare(value1, value2)
+            {
+                return value1 === value2;
+            }
+        </script>
+    </body>
+</html>
