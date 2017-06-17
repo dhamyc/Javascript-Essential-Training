@@ -19,4 +19,11 @@ Ejecutar en la consola de comandos el siguiente código:
 
 Y con eso comenzará a descargarse el proyecto en tu computadora
 ## Preguntas
-Comunicarse al siguiente correo vhcobden@gmail.com
+Comunicarse a los siguientes correos si tienes alguna pregunta
+* 48238255@continental.edu.pe
+* vhcobden@gmail.com
+___
+
+Síguenos en nuestra página de [Facebook](https://web.facebook.com/dhamyc/)
+
+Suscríbete a nuestro canal de [Youtube](https://www.youtube.com/channel/UCGh5WMRBFrC-PImpU5Ec99A)
