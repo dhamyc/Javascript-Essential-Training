@@ -1,289 +1,276 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Matching Game</title>
-        <meta name="author" content="d4160">
 
-        <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
+<head>
+    <title>Matching Game</title>
+    <meta name="author" content="d4160">
 
-            div {
-                position: absolute;
-                border: 1px solid;
-                width: 500px;
-                height: 550px;
-            }
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+        }
 
-            img {
-                position: relative;
-                width: 50px;
-                height: 50px;
-            }
+        div {
+            position: absolute;
+            border: 1px solid;
+            width: 500px;
+            height: 550px;
+        }
 
-            .small-text {
-                font-size: 1rem;
-            }
+        img {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
 
-            #left-cnv {
-                top: 85px;
-                left: 25px;
-            }
+        .small-text {
+            font-size: 1rem;
+        }
 
-            #right-cnv {
-                top: 85px;
-                left: 550px;
-            }
+        #left-cnv {
+            top: 85px;
+            left: 25px;
+        }
 
-            #left-hln {
-                top: 360px;
-                left: 25px;
-                height: 275px;
-            }
+        #right-cnv {
+            top: 85px;
+            left: 550px;
+        }
 
-            #right-hln {
-                top: 360px;
-                left: 550px;
-                height: 275px;
-            }
+        #left-hln {
+            top: 360px;
+            left: 25px;
+            height: 275px;
+        }
 
-            #left-vln {
-                top: 85px;
-                left: 275px;
-                width: 250px;
-            }
+        #right-hln {
+            top: 360px;
+            left: 550px;
+            height: 275px;
+        }
 
-            #right-vln {
-                top: 85px;
-                left: 800px;
-                width: 250px;
-            }
+        #left-vln {
+            top: 85px;
+            left: 275px;
+            width: 250px;
+        }
 
-            #gameResults-pnl {
-                left: 925px;
-                top: 20px;
-                height: 30px;
-                width: 100px;
-                border: 0px;
-                text-align: right;
-            }
+        #right-vln {
+            top: 85px;
+            left: 800px;
+            width: 250px;
+        }
 
-            #cooldown-pnl {
-                left: 515px;
-                top: 50px;
-                border: 0px;
-                width: 50px;
-                height: 50px;
-                text-align: center;
-            }
+        #gameResults-pnl {
+            left: 925px;
+            top: 20px;
+            height: 30px;
+            width: 100px;
+            border: 0px;
+            text-align: right;
+        }
 
-            #cooldown-txt {
-                vertical-align: middle;
-                font-size: 1.5rem;
-                color: darkblue;
-            }
+        #cooldown-pnl {
+            left: 515px;
+            top: 50px;
+            border: 0px;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+        }
 
-            #score-txt {
-                color: darkblue;
-                vertical-align: middle;
-            }
+        #cooldown-txt {
+            vertical-align: middle;
+            font-size: 1.5rem;
+            color: darkblue;
+        }
 
-            .behind {
-                z-index: -1;
-            }
-        </style>
-    </head>
-    <body onload="StartGame()">
+        #score-txt {
+            color: darkblue;
+            vertical-align: middle;
+        }
 
-        <h1>Matching Game <span class="small-text">Click on the extra smiling face on the left.</span>
-        </h1>
+        .behind {
+            z-index: -1;
+        }
+    </style>
+</head>
 
-        <div id="gameResults-pnl">
-            <span id="level-txt">Level: 1</span><br>
-            <span id="score-txt">Score: 0</span>
-        </div>
+<body onload="StartGame()">
 
-        <div id="cooldown-pnl">
-            <span id="cooldown-txt">30</span>
-        </div>
+    <h1>Matching Game <span class="small-text">Click on the extra smiling face on the left.</span>
+    </h1>
 
-        <div id="left-cnv">
-            <!--img src="smiley.png" alt="smiley" style="top: 500px; left: 450px;"-->
-        </div>
+    <div id="gameResults-pnl">
+        <span id="level-txt">Level: 1</span><br>
+        <span id="score-txt">Score: 0</span>
+    </div>
 
-        <div id="right-cnv">
-        </div>
+    <div id="cooldown-pnl">
+        <span id="cooldown-txt">30</span>
+    </div>
 
-        <div id="left-vln" class="behind"></div>
-        <div id="left-hln" class="behind"></div>
-        <div id="right-vln" class="behind"></div>
-        <div id="right-hln" class="behind"></div>
+    <div id="left-cnv">
+        <!--img src="smiley.png" alt="smiley" style="top: 500px; left: 450px;"-->
+    </div>
 
-        <script>
-            var level = 1;
-            var score = 0;
-            var cooldown = 30;
-            var scoreByLevel = 100;
-            var left_canvas, right_canvas, score_text, level_text, cooldown_text;
-            var updateCooldown_interval;
+    <div id="right-cnv">
+    </div>
 
-            function StartGame()
-            {
-                /* Init Variables*/
-                level = 1;
-                score = 0;
-                cooldown = 30;
-                
-                /* Get DOM Elements*/
-                left_canvas = document.getElementById("left-cnv");
-                right_canvas = document.getElementById("right-cnv");
-                score_text = document.getElementById("score-txt");
-                level_text = document.getElementById("level-txt");
-                cooldown_text = document.getElementById("cooldown-txt");
+    <div id="left-vln" class="behind"></div>
+    <div id="left-hln" class="behind"></div>
+    <div id="right-vln" class="behind"></div>
+    <div id="right-hln" class="behind"></div>
 
-                /* Go to level 1 */
-                goToNextLevel(level);
+    <script>
+        var level = 1;
+        var score = 0;
+        var cooldown = 30;
+        var scoreByLevel = 100;
+        var left_canvas, right_canvas, score_text, level_text, cooldown_text;
+        var updateCooldown_interval;
 
-                /* Interval for cooldown */
-                updateCooldown_interval = setInterval(updateCooldown, 1000);
-            }
+        function StartGame() {
+            /* Init Variables*/
+            level = 1;
+            score = 0;
+            cooldown = 30;
 
-            // Win Game and go to next level
-            function winGame()
-            {
-                // Add score and update GUI
-                score += scoreByLevel;
-                score_text.innerHTML = "Score: " + score;
+            /* Get DOM Elements*/
+            left_canvas = document.getElementById("left-cnv");
+            right_canvas = document.getElementById("right-cnv");
+            score_text = document.getElementById("score-txt");
+            level_text = document.getElementById("level-txt");
+            cooldown_text = document.getElementById("cooldown-txt");
 
-                // Add level and update GUI
-                level++;
-                level_text.innerHTML = "Level: " + level;
+            /* Go to level 1 */
+            goToNextLevel(level);
 
-                // Restart cooldown
-                cooldown = 30;
+            /* Interval for cooldown */
+            updateCooldown_interval = setInterval(updateCooldown, 1000);
+        }
 
-                // Go to next level
-                goToNextLevel(level);
-            }
+        // Win Game and go to next level
+        function winGame() {
+            // Add score and update GUI
+            score += scoreByLevel;
+            score_text.innerHTML = "Score: " + score;
 
-            // Lose game and ask the player: what will do next
-            function loseGame()
-            {
-                clearInterval(updateCooldown_interval);
+            // Add level and update GUI
+            level++;
+            level_text.innerHTML = "Level: " + level;
 
-                var name = prompt("Thanks for playing - What's your name? \nYour score is: " + score);
+            // Restart cooldown
+            cooldown = 30;
 
-                if (confirm("Do you want to play again?"))
-                    StartGame();
-                else
-                    clearCanvases();
-            }
+            // Go to next level
+            goToNextLevel(level);
+        }
 
-            function updateCooldown()
-            {
-                cooldown--;
+        // Lose game and ask the player: what will do next
+        function loseGame() {
+            clearInterval(updateCooldown_interval);
 
-                if (cooldown <= 0)
-                {
-                    cooldown = 0;
-                    loseGame();
-                }
+            var name = prompt("Thanks for playing - What's your name? \nYour score is: " + score);
 
-                cooldown_text.innerHTML = cooldown.toString();
-            }
-
-            /* Load a new level passing the level number */
-            function goToNextLevel(level)
-            {
+            if (confirm("Do you want to play again?"))
+                StartGame();
+            else
                 clearCanvases();
-                
-                var smileysCount = smileysInNextLevel(level);
-                generateSmileys(smileysCount);
+        }
+
+        function updateCooldown() {
+            cooldown--;
+
+            if (cooldown <= 0) {
+                cooldown = 0;
+                loseGame();
             }
 
-            // Generate smileys, passing a number count
-            function generateSmileys(smileysCount)
-            {
-                var smiley, cloneSmiley;
+            cooldown_text.innerHTML = cooldown.toString();
+        }
 
-                // All smileys to lose the game
-                for (var i = 0; i < smileysCount; i++)
-                {
-                    smiley = document.createElement("img");
-                    smiley.src = "http://home.cse.ust.hk/~rossiter/mooc/matching_game/smile.png";
-                    smiley.alt = "smiley";
-                    smiley.style.position = "absolute";
-                    smiley =  randomPosition(smiley, 500, 550, 50, 50);
+        /* Load a new level passing the level number */
+        function goToNextLevel(level) {
+            clearCanvases();
 
-                    // Clone the smile for the right canvas without the click event
-                    cloneSmiley = smiley.cloneNode();
+            var smileysCount = smileysInNextLevel(level);
+            generateSmileys(smileysCount);
+        }
 
-                    // Only on the left canvas can click to loseGame
-                    smiley.addEventListener("click", loseGame);
-                    
-                    // Append smiles
-                    left_canvas.appendChild(smiley);
-                    right_canvas.appendChild(cloneSmiley);
-                }
+        // Generate smileys, passing a number count
+        function generateSmileys(smileysCount) {
+            var smiley, cloneSmiley;
 
-                // Create an extra smile on the left canvas to win the game
+            // All smileys to lose the game
+            for (var i = 0; i < smileysCount; i++) {
                 smiley = document.createElement("img");
                 smiley.src = "http://home.cse.ust.hk/~rossiter/mooc/matching_game/smile.png";
                 smiley.alt = "smiley";
                 smiley.style.position = "absolute";
-                smiley.addEventListener("click", winGame);
-                smiley =  randomPosition(smiley, 500, 550, 50, 50);
+                smiley = randomPosition(smiley, 500, 550, 50, 50);
 
+                // Clone the smile for the right canvas without the click event
+                cloneSmiley = smiley.cloneNode();
+
+                // Only on the left canvas can click to loseGame
+                smiley.addEventListener("click", loseGame);
+
+                // Append smiles
                 left_canvas.appendChild(smiley);
+                right_canvas.appendChild(cloneSmiley);
             }
 
-            // Remove all childs of both canvases
-            function clearCanvases()
-            {
-                while (left_canvas.hasChildNodes())
-                {
-                    left_canvas.removeChild(left_canvas.firstChild);
-                }
+            // Create an extra smile on the left canvas to win the game
+            smiley = document.createElement("img");
+            smiley.src = "http://home.cse.ust.hk/~rossiter/mooc/matching_game/smile.png";
+            smiley.alt = "smiley";
+            smiley.style.position = "absolute";
+            smiley.addEventListener("click", winGame);
+            smiley = randomPosition(smiley, 500, 550, 50, 50);
 
-                while (right_canvas.hasChildNodes())
-                {
-                    right_canvas.removeChild(right_canvas.firstChild);
-                }
+            left_canvas.appendChild(smiley);
+        }
+
+        // Remove all childs of both canvases
+        function clearCanvases() {
+            while (left_canvas.hasChildNodes()) {
+                left_canvas.removeChild(left_canvas.firstChild);
             }
 
-            // Get next level Smileys count
-            function smileysInNextLevel(level)
-            {
-                return Math.round(level * 4);
+            while (right_canvas.hasChildNodes()) {
+                right_canvas.removeChild(right_canvas.firstChild);
             }
+        }
 
-            // RandomPosition inside a div / canvas, taking in mind the size of the image 
-            function randomPosition(smileyImg, canvasWidth, canvasHeight, imgWidth, imgHeight)
-            {
-                smileyImg.style.top = randomRange(0, canvasHeight - imgHeight) + "px";
-                smileyImg.style.left = randomRange(0, canvasWidth - imgWidth) + "px";
+        // Get next level Smileys count
+        function smileysInNextLevel(level) {
+            return Math.round(level * 4);
+        }
 
-                return smileyImg;
+        // RandomPosition inside a div / canvas, taking in mind the size of the image 
+        function randomPosition(smileyImg, canvasWidth, canvasHeight, imgWidth, imgHeight) {
+            smileyImg.style.top = randomRange(0, canvasHeight - imgHeight) + "px";
+            smileyImg.style.left = randomRange(0, canvasWidth - imgWidth) + "px";
+
+            return smileyImg;
+        }
+
+        // Random Range Min and Max
+        function randomRange(min, max) {
+            if (isInt(min) && isInt(max)) {
+                return Math.floor((Math.random() * (max + 1 - min)) + min);
+            } else {
+                return (Math.random() * (max - min)) + min;
             }
+        }
 
-            // Random Range Min and Max
-            function randomRange(min, max)
-            {
-                if (isInt(min) && isInt(max))
-                {
-                    return Math.floor((Math.random() * (max + 1 - min)) + min); 
-                }
-                else
-                {
-                    return (Math.random() * (max - min)) + min; 
-                }
-            }
+        // Check if the number is an Integer
+        function isInt(n) {
+            return n % 1 === 0;
+        }
+    </script>
+</body>
 
-            // Check if the number is an Integer
-            function isInt(n) {
-                return n % 1 === 0;
-            }
-        </script>
-    </body>
 </html>

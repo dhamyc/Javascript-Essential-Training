@@ -1,320 +1,396 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>Calculadora</title>
     <meta name="author" content="ヤマヤタケシ">
-<style>
-.top {
-    width : 100%;
-    height : 100%;
-    border-color: red;
-    border: 1px;
-}
- 
-.row {
-    width : 100%;
-    height : 14%;
-    background-color: #888;
-}
- 
-.cell {
-    width : 25%;
-    background-color: #fff;
-}
- 
-.text {
-    width : 100%;
-    height : 100%;
-    text-align: right;
-    font-size: 1.4rem;
-    padding:0px;
-    margin:0px;
-    border:none;
-}
- 
-.button {
-    width : 100%;
-    height : 100%;
-    font-size: 1.4em;
-    padding: 10px;
-}
- 
-html, body {
-    height : 100%;
-    margin: 0px;
-    padding: 0px;
-}
-</style>
-<script>
-    
-function createDentakuModel()
-{
-    var memory = 0
-    var current = 0;
-    var isInput = false;
-    var point = 0;
-    var m = {}
- 
-    m.toString = function()
-    {
-        var str = ""
-        str += "isInput " + isInput + " ";
-        str += "current " + current + " ";
-        str += "memory " + memory + " ";
-        return str;
-    }
-    m.all_clear = function()
-    {
-        memory = 0
-        current = 0;
-        calc = null;
-        isInput = false;
-        point = 0;
-    }
- 
-    m.point = function()
-    {
-        if( point == 0 ){
-            point = 1;
+    <style>
+        body {
+            background-color: #f5f5f5;
         }
-    }
- 
-    m.number = function( num )
-    {
-        if( isInput == false ){
-            isInput = true;
-            current = 0;
+
+        .text:nth-child(1) {
+            font-size: 3em;
         }
- 
-        if( 0 <= current )
-        {
-                //plus
-            if( 0 < point ){
-                current += num * Math.pow( 10, -point );
-                point++;
-            }
-            else {
-                current = current * 10;
-                current += num;
-            }
+
+        .top {
+            width: 100%;
+            height: 100%;
+            border-color: red;
+            border: 1px;
         }
-        else
-        {
-            //minus
-            if( 0 < point ){
-                current -= num * Math.pow( 10, -point );
-                point++;
+
+        .row {
+            width: 100%;
+            height: 14%;
+            background-color: #888;
+        }
+
+        .cell {
+            width: 25%;
+            padding: 5px;
+            background-color: #fff;
+        }
+
+        .text {
+            width: 100%;
+            height: 100%;
+            text-align: right;
+            font-size: 1.4rem;
+            padding: 0px;
+            margin: 0px;
+            border: none;
+        }
+
+        .button {
+            background-color: #9c27b0;
+            width: 100%;
+            height: 100%;
+            font-size: 1.4em;
+            padding: 10px;
+            border: 0;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+            outline: 0;
+            color: #bdbdbd;
+            -webkit-transition: all .3s ease;
+            transition: all .2s ease;
+        }
+
+        .button:hover {
+            background-color: #6a0080;
+            color: white;
+            box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+    <script>
+        function createDentakuModel() {
+            var memory = 0
+            var current = 0;
+            var isInput = false;
+            var point = 0;
+            var m = {}
+
+            m.toString = function () {
+                var str = ""
+                str += "isInput " + isInput + " ";
+                str += "current " + current + " ";
+                str += "memory " + memory + " ";
+                return str;
             }
-            else
+            m.all_clear = function () {
+                memory = 0
+                current = 0;
+                calc = null;
+                isInput = false;
+                point = 0;
+            }
+
+            m.point = function () {
+                if (point == 0) {
+                    point = 1;
+                }
+            }
+
+            m.number = function (num) {
+                if (isInput == false) {
+                    isInput = true;
+                    current = 0;
+                }
+
+                if (0 <= current) {
+                    //plus
+                    if (0 < point) {
+                        current += num * Math.pow(10, -point);
+                        point++;
+                    } else {
+                        current = current * 10;
+                        current += num;
+                    }
+                } else {
+                    //minus
+                    if (0 < point) {
+                        current -= num * Math.pow(10, -point);
+                        point++;
+                    } else {
+                        current = current * 10;
+                        current -= num;
+                    }
+                }
+            }
+
+            m.equal = function () {
+                if (m.calc != null) {
+                    m.calc();
+                }
+                m.calc = null;
+                memory = current;
+                isInput = false;
+                point = 0;
+            }
+
+            m.add = function () {
+                m.equal();
+                m.calc = function () {
+                    current = memory + current;
+                }
+            }
+
+            m.minus = function () {
+                current = -current;
+            }
+
+            m.sub = function () {
+                m.equal();
+                m.calc = function () {
+                    current = memory - current;
+                }
+            }
+
+            m.multi = function () {
+                m.equal();
+                m.calc = function () {
+                    current = memory * current;
+                }
+            }
+
+            m.getDisp = function () {
+                return current;
+            }
+
+            m.clear = function () {
+                current = 0;
+                point = 0;
+            }
+
+            m.divide = function () {
+                m.equal();
+                m.calc = function () {
+                    if (current == 0) {
+                        current = "err div 0";
+                        return;
+                    }
+                    current = memory / current;
+                }
+            }
+            return m;
+        }
+        dentaku_model = createDentakuModel();
+
+
+        function createViewControl() {
+            // Un form para alamacenar inputs (muestra de resultado, operador y botones)
+            var form = document.createElement("form");
+            form.className = "top";
+            document.body.appendChild(form);
+
+            // top
+            var top = document.createElement("table");
+            top.className = "top";
+            form.appendChild(top);
+
+            // siguiente Row a utilizar para todos los td
+            var tr = null;
+
+            // Crea un textbox
+            function textbox(value) {
+                var element = document.createElement("input");
+                element.type = "text";
+                element.value = value;
+                element.size = "100";
+                element.readOnly = true;
+                element.className = "text"
+                var tde = td()
+                tde.colSpan = 4;
+                tde.appendChild(element);
+                return element;
+            }
+
+            // Display de resultado
+            var disp = null;
+            // Display de operador
+            var disp2 = null;
+
+            function row() {
+                var element = document.createElement("tr");
+                element.className = "row";
+                top.appendChild(element);
+                tr = element;
+            }
+
+            function td(id) {
+                var tde = document.createElement("td");
+                tde.className = "cell";
+                tde.id = id;
+                tr.appendChild(tde);
+                return tde;
+            }
+
+            function out() {
+                disp = textbox(0);
+            }
+
+            function out2() {
+                disp2 = textbox("");
+            }
+
+            var debug_disp = null;
+
+            function debug() {
+                debug_disp = textbox(0);
+            }
+
+            function key(ch) {
+                var element = document.createElement("input");
+                element.className = "button";
+                element.type = "button";
+                element.value = ch;
+                td(ch).appendChild(element);
+                return element;
+            }
+
+            // Refresh del resultado
+            function refresh() {
+                disp.value = dentaku_model.getDisp();
+                debug_disp.value = dentaku_model.toString();
+            }
+
+            // Refresh del operador actual
+            function refresh2(symbol) {
+                disp2.value = symbol;
+            }
+
+            function sp() {
+                tr.appendChild(td());
+            }
+
+            function c() {
+                key("C").onclick = function () {
+                    dentaku_model.clear();
+                    refresh();
+                }
+            }
+
+            function ac() {
+                key("AC").onclick = function () {
+                    dentaku_model.all_clear();
+                    refresh();
+                }
+            }
+
+            function d() {
+                key("/").onclick = function () {
+                    dentaku_model.divide();
+                    refresh2("/");
+                    refresh();
+                }
+            }
+
+            function m() {
+                key("*").onclick = function () {
+                    dentaku_model.multi();
+                    refresh2("*");
+                    refresh();
+                }
+            }
+
+            function s() {
+                key("-").onclick = function () {
+                    dentaku_model.sub();
+                    refresh2("-");
+                    refresh();
+                }
+            }
+
+            function a() {
+                key("+").onclick = function () {
+                    dentaku_model.add();
+                    refresh2("+");
+                    refresh();
+                }
+            }
+
+            function e() {
+                key("=").onclick = function () {
+                    dentaku_model.equal();
+                    refresh2("=");
+                    refresh();　
+                }
+            }
+
+            function p() {
+                key(".").onclick = function () {
+                    dentaku_model.point();
+                    refresh();
+                }
+            }
+
+            function n(num) {
+                key(num).onclick = function () {
+                    dentaku_model.number(num);
+                    refresh();
+                }
+            }
+
+            function pm() {
+                key("+/-").onclick = function () {
+                    dentaku_model.minus();
+                    refresh();
+                }
+            }
+
+            //���C�A�E�g
             {
-                current = current * 10;
-                current -= num;
-            }
-        }
-    }
- 
-    m.equal = function()
-    {
-        if( m.calc != null ){
-            m.calc();
-        }
-        m.calc = null;
-        memory = current;
-        isInput = false;
-        point = 0;
-    }
-    
-    m.add = function()
-    {
-        m.equal();
-        m.calc = function()
-        {
-            current = memory + current;
-        }
-    }
- 
-    m.minus = function()
-    {
-	    current = -current;
-    }
- 
-    m.sub = function()
-    {
-        m.equal();
-        m.calc = function()
-        {
-            current = memory - current; 
-        }
-    }
-    
-    m.multi = function()
-    {
-        m.equal();
-        m.calc = function()
-        {
-            current = memory * current; 
-        }
-    }
- 
-    m.getDisp = function()
-    { 
-	    return current;
-    }
- 
-    m.clear = function()
-    {
-        current = 0;
-        point = 0;
-    }
- 
-    m.divide = function()
-    {
-        m.equal();
-        m.calc = function()
-        { 
-            if( current == 0 ){
-            current = "err div 0";
-            return;
-            }
-            current = memory / current;
-        }
-    }
-    return m;
-}
-dentaku_model = createDentakuModel();
- 
- 
-function createViewControl()
-{
-    // Un form para alamacenar inputs (muestra de resultado, operador y botones)
-    var form = document.createElement( "form" );
-    form.className = "top";
-    document.body.appendChild( form );
- 
-    // top
-     var top = document.createElement( "table" );
-     top.className = "top";
-     form.appendChild( top );
- 
-     // siguiente Row a utilizar para todos los td
-     var tr = null;
- 
-     // Crea un textbox
-     function textbox(value)
-     {
-        var element =  document.createElement( "input" );
-        element.type = "text";
-        element.value = value;
-        element.size = "100";
-        element.readOnly = true;
-        element.className = "text"
-        var tde = td()
-        tde.colSpan = 4;
-        tde.appendChild( element );
-        return element;
-     }
-     
-     // Display de resultado
-     var disp = null;
-     // Display de operador
-     var disp2 = null;
- 
-    function row()
-    {
-        var element = document.createElement( "tr" );
-        element.className = "row";
-        top.appendChild( element );
-        tr = element;
-    }
- 
-    function td( id )
-    {
-        var tde = document.createElement( "td" ); 
-        tde.className ="cell";
-        tde.id = id;
-        tr.appendChild( tde );
-        return tde;
-    }
- 
-     function out()
-     {
-	    disp = textbox(0);
-     }
+                row();
+                out2();
+                row();
+                out();
+                row();
+                c();
+                ac();
+                pm();
+                d();
+                row();
+                n(7);
+                n(8);
+                n(9);
+                m();
+                row();
+                n(4);
+                n(5);
+                n(6);
+                s();
+                row();
+                n(1);
+                n(2);
+                n(3);
+                a();
+                row();
+                n(0);
+                p();
+                e();
+                //row(); debug();
 
-     function out2()
-     {
-	    disp2 = textbox("");
-     }
- 
-     var debug_disp = null;
-     function debug()
-     {
-	    debug_disp = textbox(0);
-     }
- 
-     function key( ch )
-     {
-        var element = document.createElement("input");
-        element.className = "button";
-        element.type = "button";
-        element.value = ch;
-        td( ch ).appendChild( element );
-        return element;
-    }
-    
-    // Refresh del resultado
-    function refresh()
-    {
-        disp.value = dentaku_model.getDisp();
-        debug_disp.value = dentaku_model.toString();
-    }
-    
-    // Refresh del operador actual
-    function refresh2(symbol)
-    {
-        disp2.value = symbol;
-    }
+                var zero = document.getElementById(0);
+                zero.colSpan = 2;
+            }
+            refresh();
+        }
 
-    function sp(){ 
-	    tr.appendChild( td() );
-    }
- 
-    function c() { key( "C" ).onclick = function(){ dentaku_model.clear()  ; refresh(); } }
-    function ac() { key( "AC" ).onclick = function(){ dentaku_model.all_clear()  ; refresh(); } }
-    function d() { key( "/" ).onclick = function() { dentaku_model.divide(); refresh2("/"); refresh(); } }
-    function m() { key( "*" ).onclick = function() { dentaku_model.multi() ; refresh2("*"); refresh(); } }
-    function s() { key( "-" ).onclick = function() { dentaku_model.sub()   ; refresh2("-"); refresh();  } }
-    function a() { key( "+" ).onclick = function() { dentaku_model.add()   ; refresh2("+"); refresh(); } }
-    function e() { key( "=" ).onclick = function() { dentaku_model.equal() ; refresh2("="); refresh();　} }
-    function p() { key( "." ).onclick = function() { dentaku_model.point() ; refresh(); } }
-    function n( num ) { key( num ).onclick = function() { dentaku_model.number( num ) ; refresh(); } }
-    function pm() { key( "+/-" ).onclick = function() { dentaku_model.minus() ; refresh(); } }
-    
-    //���C�A�E�g
-    {
-        row(); out2();
-        row(); out() ;
-        row(); c()   ; ac()  ; pm()  ; d(); 
-        row(); n( 7 ); n( 8 ); n( 9 ); m(); 
-        row(); n( 4 ); n( 5 ); n( 6 ); s(); 
-        row(); n( 1 ); n( 2 ); n( 3 ); a(); 
-        row(); n( 0 ); p()   ; e(); 
-        //row(); debug();
-    
-        var zero = document.getElementById( 0 );
-        zero.colSpan =  2;
-    }
-    refresh();
-}
- 
-window.onload = function()
-{
-    createViewControl();
-};
- 
-</script>
+        window.onload = function () {
+            createViewControl();
+        };
+    </script>
 </head>
+
 <body>
 </body>
+
 </html>
